@@ -9,5 +9,4 @@ print(b64)
 # a general function that converts a given string x that is hex into base-64
 def convert(x):
     b64 = codecs.encode(codecs.decode(x, 'hex'), 'base64').decode()
-    print(x,b64)
     return b64
