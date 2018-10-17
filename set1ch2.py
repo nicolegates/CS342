@@ -21,12 +21,9 @@ print(b1)
 def XOR(x, y):
     b1 = bytearray()
     b2 = bytearray()
-
     b1.extend(x.encode())
     b2.extend(y.encode())
-
     for i in range(len(b1)):
         b1[i] = b1[i] ^ b2[i]
 
-    #note that this is a byte array, NOT a string
     return b1
