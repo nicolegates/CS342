@@ -1,29 +1,39 @@
-x = "1c0111001f010100061a024b53535009181c"
-y = "686974207468652062756c6c277320657965"
+import binascii
 
-# create byte arrays
-b1 = bytearray()
-b2 = bytearray()
+def strXOR(x, y):
+    # XORs two values together; takes two strings of bytes as input
+    x_hex = binascii.unhexlify(x)
+    y_hex = binascii.unhexlify(y)
+    result = ''
 
-# convert strings into byte arrays
-b1.extend(x.encode())
-b2.extend(y.encode())
+    for i in range(len(x_hex)):
+        result += chr(x_hex[i] ^ y_hex[i])
 
-# XOR each byte in the byte arrays against each other
-for i in range(len(b1)):
-    b1[i] = b1[i] ^ b2[i]
+    result_byte = bytearray()
+    result_byte.extend(result.encode())
+    return result_byte
 
-#print byte array containing XORed
-print(b1)
+def byteXOR(x, y):
+    # XORs two bytes together and returns the result; takes those two bytes as input
+    return bytes([x ^ y])
 
-# the XOR function: takes two values in hex, XORs them, and returns
-# a byte array containing the XORed values
-def XOR(x, y):
-    b1 = bytearray()
-    b2 = bytearray()
-    b1.extend(x.encode())
-    b2.extend(y.encode())
-    for i in range(len(b1)):
-        b1[i] = b1[i] ^ b2[i]
+def main():
+    x = "1c0111001f010100061a024b53535009181c"
+    y = "686974207468652062756c6c277320657965"
+    z = "746865206b696420646f6e277420706c6179"
 
-    return b1
+    x_hex = binascii.unhexlify(x)
+    y_hex = binascii.unhexlify(y)
+    z_hex = binascii.unhexlify(z)
+
+    result = ''
+    for i in range(0, len(x_hex)):
+        result += chr(x_hex[i] ^ y_hex[i])
+
+    result_byte = bytearray()
+    result_byte.extend(result.encode())
+
+    assert(result_byte == z_hex)
+
+if __name__ == "__main__":
+    main()
