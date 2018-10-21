@@ -1,20 +1,23 @@
 import binascii
 
+# XORs two values together; takes two strings of bytes as input
 def strXOR(x, y):
-    # XORs two values together; takes two strings of bytes as input
+    # first obtains hex values for each string
     x_hex = binascii.unhexlify(x)
     y_hex = binascii.unhexlify(y)
     result = ''
 
+    # XORs each byte together and adds them to the result, one at a time
     for i in range(len(x_hex)):
         result += chr(x_hex[i] ^ y_hex[i])
 
+    # converts result into a byte array
     result_byte = bytearray()
     result_byte.extend(result.encode())
     return result_byte
 
+# XORs two bytes together and returns the result; takes those two bytes as input
 def byteXOR(x, y):
-    # XORs two bytes together and returns the result; takes those two bytes as input
     return bytes([x ^ y])
 
 def main():

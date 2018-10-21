@@ -1,6 +1,7 @@
 import binascii
 from set1ch2 import byteXOR
 
+# frequency of letters in the English language
 freqs = {
     'a': 0.0651738,
     'b': 0.0124248,
@@ -31,50 +32,50 @@ freqs = {
     ' ': 0.1918182
 }
 
+# Returns the sum of probabilities given the frequencies above
 def score(ciphertext):
-    # Returns the sum of probabilities given the frequencies above
     score = 0
     for i in ciphertext:
+        # sets each char to lowercase
         char = chr(i).lower()
+        
+        # checks for char in freqs and adds them to the score
         if char in freqs:
             score += freqs[char]
     return score
 
-def babyXor(ciphertext, key):
-    # XORs each byte of the ciphertext with the given key value
+# XORs each byte of the ciphertext with the given key value
+def babyXOR(ciphertext, key):
     output = b''
-
     for char in ciphertext:
         output += byteXOR(char, key)
-
     return output
 
-
+# Decrypts ciphertext with every single possible byte and returns the plaintext
 def actualXor(ciphertext):
-    # Decrypts ciphertext with every single possible byte and returns the plaintext
-    candidates = []
+    possibilities = []
 
-    for key_candidate in range(256):
-        plaintext_candidate = babyXor(ciphertext, key_candidate)
-        candidate_score = score(plaintext_candidate)
+    # builds on babyXOR, except this time it does it for every key, not just one
+    for key_possibility in range(256):
+        plaintext_possibility = babyXOR(ciphertext, key_possibility)
+        possibility_score = score(plaintext_possibility)
 
         result = {
-            'key': key_candidate,
-            'score': candidate_score,
-            'plaintext': plaintext_candidate
+            'key': key_possibility,
+            'score': possibility_score,
+            'plaintext': plaintext_possibility
         }
 
-        candidates.append(result)
+        # once a result has been calculated, adds it to the possible correct key
+        possibilities.append(result)
 
-    # Return only the candidate with the highest score
-    return sorted(candidates, key=lambda c: c['score'], reverse=True)[0]
+    # returns only the possibility with the highest score (i.e. most similar to English)
+    return sorted(possibilities, key=lambda c: c['score'], reverse=True)[0]
 
 def main():
     ciphertext = binascii.unhexlify("1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736")
-    plaintext = actualXor(ciphertext)
+    plaintext = actualXOR(ciphertext)
     print(plaintext)
-
-    assert plaintext['plaintext'].rstrip() == b"Cooking MC's like a pound of bacon"
 
 if __name__ == "__main__":
     main()
