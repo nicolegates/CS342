@@ -38,7 +38,7 @@ def score(ciphertext):
     for i in ciphertext:
         # sets each char to lowercase
         char = chr(i).lower()
-        
+
         # checks for char in freqs and adds them to the score
         if char in freqs:
             score += freqs[char]
@@ -52,7 +52,7 @@ def babyXOR(ciphertext, key):
     return output
 
 # Decrypts ciphertext with every single possible byte and returns the plaintext
-def actualXor(ciphertext):
+def actualXOR(ciphertext):
     possibilities = []
 
     # builds on babyXOR, except this time it does it for every key, not just one
