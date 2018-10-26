@@ -16,8 +16,8 @@ class ECBOracle:
         return aes_ecb_encrypt(data + self._secret_padding, self._key)
 
 # returns the length of a block for the block cipher used by the encryption_oracle.
-# To find the length of a block, encrypt increasingly longer plaintexts until the size of the
-# output ciphertext increases too. When this happens, we can compute the length of a
+# to find the length of a block, encrypt increasingly longer plaintexts until the size of the
+# output ciphertext increases too. when this happens, compute the length of a
 # block as the difference between this new length of the ciphertext and the length of the
 # initial one. not very efficient, but it gets the job done.
 def find_block_length(encryption_oracle):
@@ -67,14 +67,13 @@ def byte_at_a_time_ecb_decryption(encryption_oracle):
     # Find the block length
     block_length = find_block_length(encryption_oracle)
 
-    # to detect if the oracle encrypts with ECB mode, we can encrypt a big enough (more
-    # than three block sizes) plaintext of identical bytes. If the ciphertext presents
-    # repeated blocks then we can deduct that it is very likely using ECB.
+    # encrypt a big enough plaintext of identical bytes to see if the ciphertext presents
+    # repeated blocks; if it does, then it's probably using ECB.
     ciphertext = encryption_oracle.encrypt(bytes([0] * 64))
     assert countECB(ciphertext) > 0
 
-    # the number of bytes that we have to decrypt by breaking the encryption oracle
-    # will be equal to the length of the ciphertext when we encrypt an empty message.
+    # the number of bytes to decrypt by breaking the encryption oracle =
+    # the length of the ciphertext when we encrypt an empty message.
     mysterious_text_length = len(encryption_oracle.encrypt(b''))
 
     # and now we break it
