@@ -33,15 +33,15 @@ def find_block_length(encryption_oracle):
 
     return new_len - initial_len
 
-# finds the next byte of the mysterious message that the oracle is appending to our plaintext.
-def get_next_byte(block_length, curr_decrypted_message, encryption_oracle):
+# finds the next byte of the encrypted message that the oracle is appending to our plaintext.
+def get_byte(block_length, curr_decrypted_message, encryption_oracle):
     # compute the number of characters that we want to use as input to make sure the first
-    # character of the mysterious message is at the end of a block
+    # character of the encrypted message is at the end of a block
     length_to_use = (block_length - (1 + len(curr_decrypted_message))) % block_length
     prefix = b'A' * length_to_use
 
     # compute the number of bytes that we will take from the fake and from the real ciphertexts
-    # to compare them. ignore everything is beyond the byte we are trying to discover.
+    # to compare them. ignore everything is beyond the byte we are trying to discover
     cracking_length = length_to_use + len(curr_decrypted_message) + 1
 
     # compute the real ciphertext that the oracle would output with the prefix we computed
@@ -63,7 +63,7 @@ def get_next_byte(block_length, curr_decrypted_message, encryption_oracle):
     return b''
 
 # performs the byte-at-a-time ECB decryption attack to discover the secret padding used by the oracle
-def byte_at_a_time_ecb_decryption(encryption_oracle):
+def BTECB_decrypt(encryption_oracle):
     # Find the block length
     block_length = find_block_length(encryption_oracle)
 
@@ -79,7 +79,7 @@ def byte_at_a_time_ecb_decryption(encryption_oracle):
     # and now we break it
     secret_padding = b''
     for i in range(mysterious_text_length):
-        secret_padding += get_next_byte(block_length, secret_padding, encryption_oracle)
+        secret_padding += get_byte(block_length, secret_padding, encryption_oracle)
 
     # return the complete padding as bytes
     return secret_padding
@@ -91,7 +91,7 @@ def main():
                                "pciBjYW4gYmxvdwpUaGUgZ2lybGllcyBvbiBzdGFuZGJ5IHdhdmluZyBqdXN0IH"
                                "RvIHNheSBoaQpEaWQgeW91IHN0b3A/IE5vLCBJIGp1c3QgZHJvdmUgYnkK")
     oracle = ECBOracle(secret_padding)
-    discovered_secret_padding = byte_at_a_time_ecb_decryption(oracle)
+    discovered_secret_padding = BTECB_decrypt(oracle)
 
     # check
     assert unpadPKCS7(discovered_secret_padding) == secret_padding
